@@ -1,0 +1,10 @@
+node_modules
+.git
+.env
+.env.*
+dist
+.turbo
+coverage
+*.tsbuildinfo
+docker/data
+.DS_Store
