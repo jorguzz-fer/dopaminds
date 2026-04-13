@@ -8,6 +8,13 @@
       "when": 1776081101138,
       "tag": "0000_thankful_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776081559943,
+      "tag": "0001_optimal_machine_man",
+      "breakpoints": true
     }
   ]
 }

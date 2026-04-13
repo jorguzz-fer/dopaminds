@@ -5,3 +5,4 @@ export { restorationLog } from "./restoration-log.js";
 export { educationProgress } from "./education-progress.js";
 export { aiSessions } from "./ai-sessions.js";
 export { collectiveInsights } from "./collective-insights.js";
+export { user, session, account, verification } from "./auth-schema.js";

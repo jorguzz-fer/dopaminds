@@ -4,6 +4,7 @@ import { registerCors } from "./plugins/cors.js";
 import { registerRateLimit } from "./plugins/rate-limit.js";
 import { registerCookie } from "./plugins/cookie.js";
 import { healthRoutes } from "./routes/health.js";
+import { authRoutes } from "./routes/auth.js";
 
 export async function buildApp() {
   const app = Fastify({
@@ -31,6 +32,8 @@ export async function buildApp() {
 
   // Routes
   await app.register(healthRoutes);
+  // Auth routes (Better Auth catch-all)
+  await app.register(authRoutes);
 
   return app;
 }
