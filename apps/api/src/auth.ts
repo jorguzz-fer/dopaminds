@@ -19,7 +19,7 @@ export const auth = betterAuth({
         // Check-ins, progress, AI sessions are already linked by user_id
         // Better Auth handles the user record merge
         console.log(
-          `Linked anonymous user ${anonymousUser.id} to ${newUser.id}`,
+          `Linked anonymous user ${anonymousUser.user.id} to ${newUser.user.id}`,
         );
       },
     }),

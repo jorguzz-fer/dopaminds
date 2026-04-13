@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { type FastifyError } from "fastify";
 import { registerHelmet } from "./plugins/helmet.js";
 import { registerCors } from "./plugins/cors.js";
 import { registerRateLimit } from "./plugins/rate-limit.js";
@@ -21,7 +21,7 @@ export async function buildApp() {
   await registerCookie(app);
 
   // Error handler — never expose internals
-  app.setErrorHandler((error, _request, reply) => {
+  app.setErrorHandler((error: FastifyError, _request, reply) => {
     app.log.error(error);
     const statusCode = error.statusCode ?? 500;
     reply.status(statusCode).send({
