@@ -6,3 +6,6 @@ dist/
 *.log
 docker/data/
 .DS_Store
+coverage/
+*.tsbuildinfo
+.env.*.local
