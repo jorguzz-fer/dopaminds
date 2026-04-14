@@ -9,6 +9,9 @@ COPY packages/shared/package.json packages/shared/
 COPY packages/science/package.json packages/science/
 RUN pnpm install --frozen-lockfile
 COPY . .
+# Compila workspace packages primeiro (dist/ necessário para tsup resolver os imports)
+RUN pnpm --filter @dopamind/shared build
+RUN pnpm --filter @dopamind/science build
 # tsup bundles @dopamind/shared e @dopamind/science inline — sem symlinks em produção
 RUN pnpm --filter @dopamind/api build
 # Cria deployment standalone com apenas os pacotes npm (workspace packages já inlined)
