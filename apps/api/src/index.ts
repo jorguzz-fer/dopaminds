@@ -20,6 +20,9 @@ async function runMigrations() {
 
   const migrationsFolder = join(__dirname, "../drizzle");
 
+  // Garante que a extensão pgvector existe antes das migrations
+  await migrationClient`CREATE EXTENSION IF NOT EXISTS vector`;
+
   console.log("Running database migrations…");
   await migrate(db, { migrationsFolder });
   console.log("Migrations complete.");
