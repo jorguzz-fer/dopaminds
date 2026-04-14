@@ -9,6 +9,7 @@ import {
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  betterAuthUserId: text("better_auth_user_id").notNull().unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   anonymous: boolean("anonymous").notNull().default(true),
   onboardingDone: boolean("onboarding_done").notNull().default(false),

@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 import { anonymousClient } from "better-auth/client/plugins";
 
-type AuthClient = ReturnType<typeof createAuthClient>;
+type AuthClient = ReturnType<typeof createAuthClient<{ plugins: [ReturnType<typeof anonymousClient>] }>>;
 
 export const authClient: AuthClient = createAuthClient({
   baseURL: import.meta.env.VITE_API_URL ?? window.location.origin,
