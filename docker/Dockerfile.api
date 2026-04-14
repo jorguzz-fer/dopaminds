@@ -15,7 +15,7 @@ RUN pnpm --filter @dopamind/science build
 # tsup bundles @dopamind/shared e @dopamind/science inline — sem symlinks em produção
 RUN pnpm --filter @dopamind/api build
 # Cria deployment standalone com apenas os pacotes npm (workspace packages já inlined)
-RUN pnpm --filter @dopamind/api deploy --prod /deploy
+RUN pnpm --filter @dopamind/api deploy --prod --legacy /deploy
 
 FROM base AS runtime
 WORKDIR /deploy
