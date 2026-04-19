@@ -15,6 +15,13 @@
       "when": 1776081559943,
       "tag": "0001_optimal_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776132255216,
+      "tag": "0002_jittery_kinsey_walden",
+      "breakpoints": true
     }
   ]
 }

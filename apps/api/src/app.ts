@@ -5,6 +5,9 @@ import { registerRateLimit } from "./plugins/rate-limit.js";
 import { registerCookie } from "./plugins/cookie.js";
 import { healthRoutes } from "./routes/health.js";
 import { authRoutes } from "./routes/auth.js";
+import { meRoutes } from "./routes/me.js";
+import { onboardingRoutes } from "./routes/onboarding.js";
+import { checkinRoutes } from "./routes/checkins.js";
 
 export async function buildApp() {
   const app = Fastify({
@@ -34,6 +37,9 @@ export async function buildApp() {
   await app.register(healthRoutes);
   // Auth routes (Better Auth catch-all)
   await app.register(authRoutes);
+  await app.register(meRoutes);
+  await app.register(onboardingRoutes);
+  await app.register(checkinRoutes);
 
   return app;
 }
