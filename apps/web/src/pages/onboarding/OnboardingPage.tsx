@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { AddictionCategory } from "@dopamind/shared";
+import { ProgressBar } from "@dopamind/ui";
+import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "../../lib/api";
 import { useAppStore } from "../../store/useAppStore";
 import { Step1Category } from "./steps/Step1Category";
@@ -50,7 +52,7 @@ export function OnboardingPage() {
     setTimeout(() => {
       setCurrentStep((prev) => prev + 1);
       setAnimating(false);
-    }, 300);
+    }, 260);
   }
 
   function handleBack() {
@@ -60,7 +62,7 @@ export function OnboardingPage() {
     setTimeout(() => {
       setCurrentStep((prev) => prev - 1);
       setAnimating(false);
-    }, 300);
+    }, 260);
   }
 
   async function handleSubmit(partial: Partial<OnboardingFormData>) {
@@ -86,121 +88,61 @@ export function OnboardingPage() {
     }
   }
 
-  const animationStyle: React.CSSProperties = animating
-    ? {}
-    : {
-        animation: `${direction === "forward" ? "slideInFromRight" : "slideInFromLeft"} 0.25s ease-out`,
-      };
+  const animationClass = animating
+    ? ""
+    : direction === "forward"
+      ? "animate-[slideInFromRight_0.3s_cubic-bezier(0.22,1,0.36,1)_both]"
+      : "animate-[slideInFromLeft_0.3s_cubic-bezier(0.22,1,0.36,1)_both]";
 
   function renderStep() {
     switch (currentStep) {
       case 1:
-        return <Step1Category onNext={(data) => handleNext(data)} />;
+        return <Step1Category onNext={handleNext} />;
       case 2:
-        return (
-          <Step2Usage
-            onNext={(data) => handleNext(data)}
-            onBack={handleBack}
-          />
-        );
+        return <Step2Usage onNext={handleNext} />;
       case 3:
-        return (
-          <Step3History
-            onNext={(data) => handleNext(data)}
-            onBack={handleBack}
-          />
-        );
+        return <Step3History onNext={handleNext} />;
       case 4:
-        return (
-          <Step4Impact
-            onNext={(data) => handleNext(data)}
-            onBack={handleBack}
-          />
-        );
+        return <Step4Impact onNext={handleNext} />;
       case 5:
-        return (
-          <Step5Goal
-            onNext={(data) => handleSubmit(data)}
-            onBack={handleBack}
-            formData={formData}
-            isSubmitting={isSubmitting}
-          />
-        );
+        return <Step5Goal onNext={handleSubmit} formData={formData} isSubmitting={isSubmitting} />;
       default:
         return null;
     }
   }
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "#111118" }}
-    >
-      {/* Fixed header */}
-      <div
-        className="flex items-center justify-between px-5 py-4"
-        style={{
-          paddingTop: "calc(env(safe-area-inset-top, 0px) + 16px)",
-        }}
+    <div className="flex min-h-screen flex-col">
+      <header
+        className="flex items-center gap-4 px-5 pt-4 pb-3"
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 16px)" }}
       >
-        {/* Back button */}
         <button
           onClick={handleBack}
-          className="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-150 active:scale-95"
-          style={{
-            backgroundColor: currentStep === 1 ? "transparent" : "#1A1A24",
-            opacity: currentStep === 1 ? 0 : 1,
-            pointerEvents: currentStep === 1 ? "none" : "auto",
-          }}
-          aria-hidden={currentStep === 1}
+          aria-label="Voltar"
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/80 transition-all duration-150 active:scale-95 disabled:opacity-0"
+          disabled={currentStep === 1}
         >
-          <span className="text-white text-[20px] leading-none">←</span>
+          <ArrowLeft className="h-4 w-4" strokeWidth={2.25} />
         </button>
 
-        {/* Progress dots */}
-        <div className="flex items-center gap-2">
-          {Array.from({ length: TOTAL_STEPS }, (_, i) => {
-            const stepNumber = i + 1;
-            const isCompleted = stepNumber < currentStep;
-            const isCurrent = stepNumber === currentStep;
-            return (
-              <div
-                key={stepNumber}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width: isCurrent ? 20 : 8,
-                  height: 8,
-                  backgroundColor:
-                    isCompleted || isCurrent
-                      ? "#FF4444"
-                      : "rgba(255,255,255,0.15)",
-                }}
-              />
-            );
-          })}
+        <div className="flex-1">
+          <ProgressBar value={0} segments={TOTAL_STEPS} activeSegment={currentStep} />
         </div>
 
-        {/* Spacer to balance the back button */}
-        <div className="w-10" />
-      </div>
+        <div className="w-10 flex-shrink-0 text-right text-[11px] font-semibold uppercase tracking-widest text-white/40">
+          {currentStep}/{TOTAL_STEPS}
+        </div>
+      </header>
 
-      {/* Error banner */}
       {error && (
-        <div
-          className="mx-5 mb-2 rounded-xl px-4 py-3 text-[14px] text-white"
-          style={{ backgroundColor: "rgba(255,68,68,0.15)", border: "1px solid rgba(255,68,68,0.3)" }}
-        >
+        <div className="mx-5 mb-2 rounded-2xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-[14px] text-rose-100">
           {error}
         </div>
       )}
 
-      {/* Step content */}
       <div className="flex-1 overflow-hidden">
-        <div
-          key={currentStep}
-          style={animationStyle}
-          className="h-full overflow-y-auto"
-        >
+        <div key={currentStep} className={`h-full overflow-y-auto ${animationClass}`}>
           {renderStep()}
         </div>
       </div>

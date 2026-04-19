@@ -1,33 +1,31 @@
 import { useState } from "react";
-import { Button } from "@dopamind/ui";
+import { Button, Card } from "@dopamind/ui";
 import { calculateSeverityScore } from "@dopamind/science";
+import { Minus, Plus, Lock, Sparkles } from "lucide-react";
 import type { OnboardingFormData } from "../OnboardingPage";
 
 interface Step5Props {
   onNext: (data: { dailyUsageGoalHours: number }) => void;
-  onBack: () => void;
   formData: OnboardingFormData;
   isSubmitting: boolean;
 }
 
 function getSeverityColor(score: number): string {
-  if (score <= 3) return "#44CC88";
-  if (score <= 6) return "#FFAA00";
-  return "#FF4444";
+  if (score <= 3) return "#6be3b1";
+  if (score <= 6) return "#ffb347";
+  return "#ff6b7a";
+}
+
+function getSeverityLabel(score: number): string {
+  if (score <= 3) return "Leve";
+  if (score <= 6) return "Moderado";
+  return "Intenso";
 }
 
 export function Step5Goal({ onNext, formData, isSubmitting }: Step5Props) {
   const maxGoal = Math.max(0, formData.hoursPerDay - 0.5);
   const startValue = Math.max(0.5, formData.hoursPerDay - 1);
   const [value, setValue] = useState(Math.min(startValue, maxGoal));
-
-  function decrement() {
-    setValue((v) => Math.max(0, Math.round((v - 0.5) * 10) / 10));
-  }
-
-  function increment() {
-    setValue((v) => Math.min(maxGoal, Math.round((v + 0.5) * 10) / 10));
-  }
 
   const severityScore = calculateSeverityScore({
     hoursPerDay: formData.hoursPerDay,
@@ -38,99 +36,87 @@ export function Step5Goal({ onNext, formData, isSubmitting }: Step5Props) {
   });
 
   const severityColor = getSeverityColor(severityScore);
+  const severityLabel = getSeverityLabel(severityScore);
 
   return (
-    <div className="flex flex-col gap-6 px-5 pt-4 pb-[env(safe-area-inset-bottom,20px)]">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-[24px] font-bold text-white leading-tight">
+    <div className="flex min-h-full flex-col gap-6 px-5 pt-6 pb-[env(safe-area-inset-bottom,20px)]">
+      <div className="space-y-2">
+        <h1 className="text-[28px] font-semibold text-white leading-tight tracking-tight">
           Qual é sua meta?
         </h1>
-        <p className="text-[14px]" style={{ color: "#6B6B80" }}>
-          Defina um alvo realista para o primeiro mês
-        </p>
+        <p className="text-sm text-white/50">Defina um alvo realista para o primeiro mês</p>
       </div>
 
-      {/* Stepper */}
-      <div className="flex flex-col items-center gap-3 py-6">
-        <span
-          className="text-[48px] font-bold leading-none"
-          style={{ color: "#FF4444" }}
-        >
-          {value === 0 ? "Abstinência total 🔒" : `${value}h por dia`}
-        </span>
-      </div>
-
-      <div className="flex items-center justify-center gap-8">
-        <button
-          onClick={decrement}
-          disabled={value <= 0}
-          className="flex items-center justify-center text-[24px] font-bold text-white rounded-full transition-all duration-150 active:scale-95 disabled:opacity-40"
-          style={{
-            width: 56,
-            height: 56,
-            backgroundColor: "#22222E",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          −
-        </button>
-        <button
-          onClick={increment}
-          disabled={value >= maxGoal}
-          className="flex items-center justify-center text-[24px] font-bold text-white rounded-full transition-all duration-150 active:scale-95 disabled:opacity-40"
-          style={{
-            width: 56,
-            height: 56,
-            backgroundColor: "#22222E",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          +
-        </button>
-      </div>
-
-      {/* Severity preview */}
-      <div
-        className="flex flex-col gap-3 rounded-2xl p-4"
-        style={{ backgroundColor: "#1A1A24" }}
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-[14px] font-medium text-white">
-            Nível de dependência estimado:
+      <div className="flex flex-col items-center justify-center gap-2 py-6">
+        {value === 0 ? (
+          <div className="flex items-center gap-3 text-white">
+            <Lock className="h-7 w-7 text-violet-300" strokeWidth={1.75} />
+            <span className="text-4xl font-semibold bg-gradient-to-b from-white to-violet-200 bg-clip-text text-transparent">
+              Abstinência total
+            </span>
+          </div>
+        ) : (
+          <span className="text-7xl font-semibold leading-none tabular-nums bg-gradient-to-b from-white to-violet-200 bg-clip-text text-transparent">
+            {value}h
           </span>
-          <span className="text-[14px] font-bold" style={{ color: severityColor }}>
-            {severityScore}/10
+        )}
+        <span className="text-xs uppercase tracking-[0.3em] text-white/40">por dia</span>
+      </div>
+
+      <div className="flex items-center justify-center gap-10">
+        <button
+          onClick={() => setValue((v) => Math.max(0, Math.round((v - 0.5) * 10) / 10))}
+          disabled={value <= 0}
+          aria-label="Diminuir"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/80 transition-all active:scale-95 disabled:opacity-30"
+        >
+          <Minus className="h-5 w-5" strokeWidth={2.25} />
+        </button>
+        <button
+          onClick={() => setValue((v) => Math.min(maxGoal, Math.round((v + 0.5) * 10) / 10))}
+          disabled={value >= maxGoal}
+          aria-label="Aumentar"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/80 transition-all active:scale-95 disabled:opacity-30"
+        >
+          <Plus className="h-5 w-5" strokeWidth={2.25} />
+        </button>
+      </div>
+
+      <Card variant="frosted" padding="md">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[13px] font-medium text-white/70">
+            Nível de dependência estimado
+          </span>
+          <span className="text-sm font-bold" style={{ color: severityColor }}>
+            {severityScore}/10 · {severityLabel}
           </span>
         </div>
 
-        {/* Bar */}
-        <div
-          className="w-full h-2 rounded-full overflow-hidden"
-          style={{ backgroundColor: "rgba(255,255,255,0.08)" }}
-        >
+        <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-full rounded-full transition-all duration-500"
+            className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
               width: `${(severityScore / 10) * 100}%`,
-              backgroundColor: severityColor,
+              background: `linear-gradient(90deg, ${severityColor}88, ${severityColor})`,
+              boxShadow: `0 0 16px ${severityColor}66`,
             }}
           />
         </div>
 
-        <p className="text-[12px]" style={{ color: "#6B6B80" }}>
+        <p className="mt-3 text-[11px] text-white/40">
           Baseado em critérios científicos de dependência comportamental
         </p>
-      </div>
+      </Card>
 
       <div className="mt-auto pt-2">
         <Button
           size="lg"
-          accentColor="#FF4444"
-          className="w-full"
+          fullWidth
           loading={isSubmitting}
           onClick={() => onNext({ dailyUsageGoalHours: value })}
         >
-          Começar minha recuperação 🧠
+          <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+          Começar minha recuperação
         </Button>
       </div>
     </div>

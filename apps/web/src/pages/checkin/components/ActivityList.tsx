@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { getPhaseColor } from "../../../lib/phaseColors";
+import { Check, Plus } from "lucide-react";
+import { cn } from "@dopamind/ui";
 
 const PRESET_ACTIVITIES = [
   "Exercício físico",
@@ -18,12 +19,13 @@ interface ActivityListProps {
   phase: number;
 }
 
-export function ActivityList({ value, onChange, phase }: ActivityListProps) {
-  const color = getPhaseColor(phase);
+export function ActivityList({ value, onChange }: ActivityListProps) {
   const [customInput, setCustomInput] = useState("");
 
   const toggle = (activity: string) => {
-    onChange(value.includes(activity) ? value.filter((v) => v !== activity) : [...value, activity]);
+    onChange(
+      value.includes(activity) ? value.filter((v) => v !== activity) : [...value, activity],
+    );
   };
 
   const addCustom = () => {
@@ -43,24 +45,27 @@ export function ActivityList({ value, onChange, phase }: ActivityListProps) {
             key={activity}
             type="button"
             onClick={() => toggle(activity)}
-            className="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-sm transition-all duration-150"
-            style={{
-              backgroundColor: selected ? `${color}22` : "#111118",
-              color: selected ? "white" : "#ffffff60",
-            }}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm transition-all duration-150",
+              selected
+                ? "bg-white/[0.07] border border-violet-400/30 text-white shadow-[inset_0_0_0_1px_rgba(167,139,250,0.12)]"
+                : "bg-white/[0.03] border border-white/10 text-white/60",
+            )}
           >
             <span
-              className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: selected ? color : "#ffffff15" }}
+              className={cn(
+                "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md transition-colors",
+                selected ? "bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_2px_8px_-2px_rgba(167,139,250,0.5)]" : "bg-white/10",
+              )}
             >
-              {selected && <span className="text-white text-xs">✓</span>}
+              {selected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
             </span>
-            {activity}
+            <span className="flex-1 text-left">{activity}</span>
           </button>
         );
       })}
-      {/* Custom activity input */}
-      <div className="flex gap-2 mt-1">
+
+      <div className="mt-2 flex gap-2">
         <input
           type="text"
           value={customInput}
@@ -72,15 +77,15 @@ export function ActivityList({ value, onChange, phase }: ActivityListProps) {
             }
           }}
           placeholder="Outra atividade..."
-          className="flex-1 bg-[#111118] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/20"
+          className="flex-1 rounded-full bg-white/[0.04] border border-white/10 px-5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-violet-400/40 focus:bg-white/[0.06]"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-4 py-2.5 rounded-xl text-sm font-medium"
-          style={{ backgroundColor: `${color}22`, color }}
+          aria-label="Adicionar"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-violet-500/15 text-violet-200 border border-violet-400/30 transition-all active:scale-95 hover:bg-violet-500/25"
         >
-          +
+          <Plus className="h-4 w-4" strokeWidth={2.25} />
         </button>
       </div>
     </div>

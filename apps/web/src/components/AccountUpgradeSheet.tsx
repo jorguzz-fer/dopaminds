@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Button } from "@dopamind/ui";
+import { Lock, PartyPopper } from "lucide-react";
 import { signUp } from "../lib/auth";
 import { useAppStore } from "../store/useAppStore";
-import { Button } from "@dopamind/ui";
 
 interface AccountUpgradeSheetProps {
   isOpen: boolean;
@@ -20,7 +21,11 @@ export function AccountUpgradeSheet({ isOpen, onClose }: AccountUpgradeSheetProp
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
 
   const handleDismiss = () => {
     localStorage.setItem("dopamind:upgrade_prompt_shown", "true");
@@ -40,8 +45,9 @@ export function AccountUpgradeSheet({ isOpen, onClose }: AccountUpgradeSheetProp
       setSuccess(true);
       localStorage.setItem("dopamind:upgrade_prompt_shown", "true");
       setTimeout(onClose, 1200);
-    } catch (e: any) {
-      setError(e.message ?? "Erro ao criar conta. Tente novamente.");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erro ao criar conta. Tente novamente.";
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -49,39 +55,43 @@ export function AccountUpgradeSheet({ isOpen, onClose }: AccountUpgradeSheetProp
 
   return (
     <>
-      {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
           onClick={handleDismiss}
         />
       )}
 
-      {/* Sheet */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A24] rounded-t-3xl px-5 pt-6 pb-8 transition-transform duration-300"
+        className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md rounded-t-[32px] border-t border-white/10 bg-[var(--color-surface-2)]/95 px-5 pt-5 backdrop-blur-2xl transition-transform duration-300"
         style={{
           transform: isOpen ? "translateY(0)" : "translateY(100%)",
           paddingBottom: "calc(2rem + env(safe-area-inset-bottom, 0px))",
         }}
       >
-        {/* Drag handle */}
-        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-6" />
+        <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-white/20" />
 
         {success ? (
-          <div className="text-center py-4">
-            <div className="text-4xl mb-3">🎉</div>
-            <p className="text-white font-semibold">Conta criada!</p>
-            <p className="text-white/50 text-sm mt-1">Seu progresso está salvo.</p>
+          <div className="py-6 text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-[0_10px_30px_-10px_rgba(147,51,234,0.55)]">
+              <PartyPopper className="h-7 w-7" strokeWidth={1.75} />
+            </div>
+            <p className="text-lg font-semibold text-white">Conta criada!</p>
+            <p className="mt-1 text-sm text-white/55">Seu progresso está salvo.</p>
           </div>
         ) : (
           <>
-            <div className="mb-6">
-              <h2 className="text-white text-xl font-bold">🔐 Salve seu progresso</h2>
-              <p className="text-white/50 text-sm mt-2 leading-relaxed">
-                Seus dados desaparecem se você limpar o navegador. Crie uma conta
-                gratuita para protegê-los permanentemente.
-              </p>
+            <div className="mb-6 flex items-start gap-3">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-violet-500/20 border border-violet-400/30 text-violet-200">
+                <Lock className="h-5 w-5" strokeWidth={1.75} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Salve seu progresso</h2>
+                <p className="mt-1 text-sm leading-relaxed text-white/55">
+                  Seus dados desaparecem se você limpar o navegador. Crie uma conta gratuita
+                  para protegê-los permanentemente.
+                </p>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
@@ -90,34 +100,30 @@ export function AccountUpgradeSheet({ isOpen, onClose }: AccountUpgradeSheetProp
                 type="email"
                 placeholder="Seu e-mail"
                 autoComplete="email"
-                className="w-full bg-[#111118] border border-white/10 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-violet-400/40 focus:bg-white/[0.06] focus:outline-none"
               />
               <input
                 {...register("password", { required: true, minLength: 8 })}
                 type="password"
                 placeholder="Senha (mínimo 8 caracteres)"
                 autoComplete="new-password"
-                className="w-full bg-[#111118] border border-white/10 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-violet-400/40 focus:bg-white/[0.06] focus:outline-none"
               />
-              {(errors.password?.type === "minLength") && (
-                <p className="text-red-400 text-xs">Senha deve ter no mínimo 8 caracteres.</p>
+              {errors.password?.type === "minLength" && (
+                <p className="text-xs text-rose-300">
+                  Senha deve ter no mínimo 8 caracteres.
+                </p>
               )}
-              {error && <p className="text-red-400 text-xs">{error}</p>}
+              {error && <p className="text-xs text-rose-300">{error}</p>}
 
-              <Button
-                type="submit"
-                size="lg"
-                accentColor="#4499FF"
-                loading={submitting}
-                className="w-full mt-2"
-              >
+              <Button type="submit" size="lg" fullWidth loading={submitting} className="mt-2">
                 Criar conta gratuita
               </Button>
             </form>
 
             <button
               onClick={handleDismiss}
-              className="w-full text-center text-white/40 text-sm mt-4 py-2"
+              className="mt-4 w-full py-2 text-center text-sm text-white/45 hover:text-white/70"
             >
               Agora não
             </button>

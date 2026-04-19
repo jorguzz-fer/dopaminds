@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@dopamind/ui";
+import { Minus, Plus, ArrowRight } from "lucide-react";
 
 interface Step2Props {
   onNext: (data: { hoursPerDay: number }) => void;
-  onBack: () => void;
 }
 
 function getUsageLabel(hours: number): string {
@@ -12,77 +12,66 @@ function getUsageLabel(hours: number): string {
   return "Uso intenso";
 }
 
+function StepperButton({
+  onClick,
+  disabled,
+  children,
+  ariaLabel,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+  ariaLabel: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      className="flex h-14 w-14 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/80 transition-all duration-150 active:scale-95 disabled:opacity-30"
+    >
+      {children}
+    </button>
+  );
+}
+
 export function Step2Usage({ onNext }: Step2Props) {
   const [value, setValue] = useState(2.0);
 
-  function decrement() {
-    setValue((v) => Math.max(0.5, Math.round((v - 0.5) * 10) / 10));
-  }
-
-  function increment() {
-    setValue((v) => Math.min(16, Math.round((v + 0.5) * 10) / 10));
-  }
+  const decrement = () => setValue((v) => Math.max(0.5, Math.round((v - 0.5) * 10) / 10));
+  const increment = () => setValue((v) => Math.min(16, Math.round((v + 0.5) * 10) / 10));
 
   return (
-    <div className="flex flex-col gap-6 px-5 pt-4 pb-[env(safe-area-inset-bottom,20px)]">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-[24px] font-bold text-white leading-tight">
+    <div className="flex min-h-full flex-col gap-6 px-5 pt-6 pb-[env(safe-area-inset-bottom,20px)]">
+      <div className="space-y-2">
+        <h1 className="text-[28px] font-semibold text-white leading-tight tracking-tight">
           Quanto tempo você usa por dia?
         </h1>
-        <p className="text-[14px]" style={{ color: "#6B6B80" }}>
-          Seja honesto — isso ajuda o algoritmo
-        </p>
+        <p className="text-sm text-white/50">Seja honesto — isso calibra o algoritmo</p>
       </div>
 
-      <div className="flex flex-col items-center gap-3 py-8">
-        <span
-          className="text-[56px] font-bold leading-none"
-          style={{ color: "#FF4444" }}
-        >
-          {value % 1 === 0 ? `${value}h` : `${value}h`}
+      <div className="flex flex-col items-center justify-center gap-3 py-10">
+        <span className="text-7xl font-semibold leading-none tabular-nums bg-gradient-to-b from-white to-violet-200 bg-clip-text text-transparent">
+          {value}h
         </span>
-        <span className="text-[15px] font-medium" style={{ color: "#6B6B80" }}>
+        <span className="text-xs uppercase tracking-[0.3em] text-white/40">
           {getUsageLabel(value)}
         </span>
       </div>
 
-      <div className="flex items-center justify-center gap-8">
-        <button
-          onClick={decrement}
-          disabled={value <= 0.5}
-          className="flex items-center justify-center text-[24px] font-bold text-white rounded-full transition-all duration-150 active:scale-95 disabled:opacity-40"
-          style={{
-            width: 56,
-            height: 56,
-            backgroundColor: "#22222E",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          −
-        </button>
-        <button
-          onClick={increment}
-          disabled={value >= 16}
-          className="flex items-center justify-center text-[24px] font-bold text-white rounded-full transition-all duration-150 active:scale-95 disabled:opacity-40"
-          style={{
-            width: 56,
-            height: 56,
-            backgroundColor: "#22222E",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          +
-        </button>
+      <div className="flex items-center justify-center gap-10">
+        <StepperButton onClick={decrement} disabled={value <= 0.5} ariaLabel="Diminuir">
+          <Minus className="h-5 w-5" strokeWidth={2.25} />
+        </StepperButton>
+        <StepperButton onClick={increment} disabled={value >= 16} ariaLabel="Aumentar">
+          <Plus className="h-5 w-5" strokeWidth={2.25} />
+        </StepperButton>
       </div>
 
       <div className="mt-auto pt-6">
-        <Button
-          size="lg"
-          accentColor="#FF4444"
-          className="w-full"
-          onClick={() => onNext({ hoursPerDay: value })}
-        >
-          Continuar →
+        <Button size="lg" fullWidth onClick={() => onNext({ hoursPerDay: value })}>
+          Continuar
+          <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
         </Button>
       </div>
     </div>

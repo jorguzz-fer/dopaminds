@@ -1,3 +1,6 @@
+import { Card } from "@dopamind/ui";
+import { Lightbulb } from "lucide-react";
+
 interface RelapseSectionProps {
   value: boolean;
   onChange: (v: boolean) => void;
@@ -12,29 +15,35 @@ export function RelapseSection({
   onRelapseDurationChange,
 }: RelapseSectionProps) {
   return (
-    <div className="bg-[#111118] rounded-2xl p-4 space-y-3">
-      <div className="flex items-center justify-between">
+    <Card variant="frosted" padding="md">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-white text-sm font-medium">Tive uma recaída hoje</p>
-          <p className="text-white/40 text-xs mt-0.5">Honestidade acelera sua recuperação</p>
+          <p className="text-sm font-semibold text-white">Tive uma recaída hoje</p>
+          <p className="mt-0.5 text-xs text-white/45">Honestidade acelera sua recuperação</p>
         </div>
         <button
           type="button"
           onClick={() => onChange(!value)}
-          className="relative w-14 h-7 rounded-full transition-colors duration-200 flex-shrink-0"
-          style={{ backgroundColor: value ? "#FF4444" : "#ffffff22" }}
+          aria-pressed={value}
+          className="relative h-8 w-14 flex-shrink-0 rounded-full transition-colors duration-200"
+          style={{
+            background: value
+              ? "linear-gradient(90deg, #f43f5e, #c026d3)"
+              : "rgba(255,255,255,0.12)",
+            boxShadow: value ? "0 4px 14px -4px rgba(244,63,94,0.55)" : "none",
+          }}
         >
           <span
-            className="absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200"
-            style={{ transform: value ? "translateX(28px)" : "translateX(2px)" }}
+            className="absolute top-1 h-6 w-6 rounded-full bg-white shadow-md transition-transform duration-200"
+            style={{ transform: value ? "translateX(26px)" : "translateX(4px)" }}
           />
         </button>
       </div>
 
       {value && (
-        <div className="pt-2 border-t border-white/10 space-y-3">
+        <div className="mt-4 space-y-3 border-t border-white/10 pt-4 animate-[fadeInUp_0.3s_ease-out_both]">
           <div>
-            <label className="text-white/60 text-xs uppercase tracking-wider">
+            <label className="text-[11px] uppercase tracking-widest text-white/45 font-semibold">
               Duração (minutos)
             </label>
             <input
@@ -45,15 +54,18 @@ export function RelapseSection({
               }
               min={1}
               placeholder="Ex: 30"
-              className="mt-2 w-full bg-[#1A1A24] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white focus:border-violet-400/40 focus:bg-white/[0.06] focus:outline-none"
             />
           </div>
-          <p className="text-white/50 text-xs leading-relaxed">
-            💡 Recaída não é fracasso — é dado. Seu streak vai reiniciar, mas o progresso
-            neurológico permanece. O cérebro continua se recalibrando.
-          </p>
+          <div className="flex gap-3 rounded-2xl bg-violet-500/10 border border-violet-400/20 px-4 py-3">
+            <Lightbulb className="h-4 w-4 flex-shrink-0 text-violet-300 mt-0.5" strokeWidth={2} />
+            <p className="text-xs leading-relaxed text-white/70">
+              Recaída não é fracasso — é dado. Seu streak vai reiniciar, mas o progresso
+              neurológico permanece. O cérebro continua se recalibrando.
+            </p>
+          </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

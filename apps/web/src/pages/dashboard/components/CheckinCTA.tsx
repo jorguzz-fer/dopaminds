@@ -1,6 +1,6 @@
-import { Button } from "@dopamind/ui";
+import { Button, Card } from "@dopamind/ui";
 import { useNavigate } from "react-router";
-import { getPhaseColor } from "../../../lib/phaseColors";
+import { Check, Sparkles } from "lucide-react";
 
 interface CheckinCTAProps {
   hasCheckedInToday: boolean;
@@ -8,31 +8,33 @@ interface CheckinCTAProps {
   loading: boolean;
 }
 
-export function CheckinCTA({ hasCheckedInToday, phase, loading }: CheckinCTAProps) {
+export function CheckinCTA({ hasCheckedInToday, loading }: CheckinCTAProps) {
   const navigate = useNavigate();
 
-  if (loading) return <div className="h-14 bg-white/5 rounded-2xl animate-pulse" />;
+  if (loading) {
+    return <div className="h-14 rounded-3xl bg-white/5 animate-pulse" />;
+  }
 
   if (hasCheckedInToday) {
     return (
-      <div className="flex items-center gap-3 p-4 bg-[#111118] rounded-2xl">
-        <span className="text-green-400 text-xl">✓</span>
-        <div>
-          <p className="text-white/80 text-sm font-medium">Check-in feito hoje</p>
-          <p className="text-white/40 text-xs mt-0.5">Volte amanhã para manter seu streak</p>
+      <Card variant="frosted" padding="md">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+            <Check className="h-5 w-5" strokeWidth={2.5} />
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-white">Check-in feito hoje</p>
+            <p className="text-xs text-white/45">Volte amanhã para manter seu streak</p>
+          </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <Button
-      size="lg"
-      accentColor={getPhaseColor(phase)}
-      className="w-full"
-      onClick={() => navigate("/checkin")}
-    >
-      Fazer check-in de hoje →
+    <Button size="lg" fullWidth onClick={() => navigate("/checkin")}>
+      <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+      Fazer check-in de hoje
     </Button>
   );
 }
